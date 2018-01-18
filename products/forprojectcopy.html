@@ -1,0 +1,304 @@
+
+<style>
+ table {
+            font-family: arial, sans-serif;
+            border-collapse: collapse;
+            width: 100%;
+        }
+        td, th {
+            border: 1px solid #dddddd;
+            text-align: left;
+            padding: 8px;
+        }
+
+ .bin, .item {
+  font-size: 45px;
+  text-align: center;
+  margin: 0 5px;
+}
+
+.bin {
+    
+  background: #fff;
+  min-height:60px; 
+  width: 150px;
+  float: left;
+  border-radius: 5px;
+  padding: 5px;
+  margin: 5px auto;
+   
+    box-shadow: 0 0 10px rgba(0,0,0,0.2);
+ 
+
+}
+
+.itemchild {
+   min-height: 50px;
+    background:  #DB266C;
+  min-width: 80px;
+   font-family: "Gloria Hallelujah", cursive;
+  font-size: 10px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.2);
+    border-radius: 5px;
+ 
+  transition: all 0.2s ease;
+}
+.item {
+   min-height: 50px;
+    background:  #DB266C;
+  min-width: 80px;
+   font-family: "Gloria Hallelujah", cursive;
+  font-size: 10px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.2);
+    border-radius: 5px;
+ 
+  transition: all 0.2s ease;
+}
+
+.item1 {
+   min-height: 50px;
+    background:#33CCCC;
+     font-family: "Gloria Hallelujah", cursive;
+  font-size: 10px;
+  min-width: 80px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.2);
+    border-radius: 5px;
+ 
+  transition: all 0.2s ease;
+}
+
+.drag {
+  opacity: 0.5;
+}
+
+.over {
+  background: #33CCCC;
+}
+
+.buttonsuccess {
+    color: #ffffff !important;
+  background-color: #DB266C;
+  border-color: #DB266C
+  
+    
+}
+
+.scrollable {
+  overflow-y:auto;
+  width:230px;
+  height:200px;
+  border: 1px solid #000;
+  margin: 5px;
+  padding: 5px;
+}
+
+.scrollable p {
+  margin-bottom: 5px;
+}
+
+.scrollable::-webkit-scrollbar-thumb {
+  background-color: #000;
+}
+
+.scrollable::-webkit-scrollbar {
+  width: 14px;
+  height: 6px;
+}
+
+.scrollable::-webkit-scrollbar-button:start:decrement,
+.scrollable::-webkit-scrollbar-button:end:increment {
+  height: 30px;
+  display: block;
+  background-color:#999;
+}
+
+.scrollable::-webkit-scrollbar-track-piece {
+  background-color: #666;
+  -webkit-border-radius: 0px;
+}
+
+.scrollable::-webkit-scrollbar-thumb:vertical {
+  height: 50px;
+  background-color: #000;
+  -webkit-border-radius: 6px;
+}
+</style>
+    <div   ng-controller="newctrl">
+
+      <div class="page-header">
+        <h1>Data Analyzer</h1>
+        
+      </div>
+
+      <div class="row">
+        <div class="col-md-4">
+           <h3>1. Select Format</h3>
+         
+  <div class="col-sm-8" >
+
+    
+           <div class="checkbox">
+    <label>
+      <input type="checkbox"  ng-model="mysqlselect">
+      MySQL
+    </label>
+  </div>
+  <br>
+    <input ng-if="mysqlselect" class="form-control" type="text" name="" ng-model="username" placeholder="username">
+    <br>
+    <input ng-if="mysqlselect" class="form-control" type="password" name="" ng-model="password" placeholder="password">
+    <br>
+    <input ng-if="mysqlselect" class="form-control" type="text" name="" ng-model="host" placeholder="Host">
+
+    <br>
+    <button ng-if="mysqlselect" type="button" ng-click = "sql_show()" class="btn btn-default btn-sm" >Submit</button>
+    
+     </div>
+
+
+
+   <div class="col-sm-8" >
+    <div class="checkbox">
+    <label>
+      <input type="checkbox" ng-model="csvselect">
+      CSV
+    </label>
+  </div>
+  <br>
+   <label ng-if="csvselect" for="files">Upload a CSV formatted file:</label>
+       <input ng-if="csvselect" type="file" id="fileUpload" />
+       <br>
+<input type="button" ng-if="csvselect" id="upload" value="Upload" ng-click= "show_csv_content()" />
+  </div>
+
+        </div>
+
+        
+          <div class="col-md-8" id="dvCSV" ng-if="hide_because_of_sql">
+          </div>
+        
+        <div class="col-md-4" ng-if="hide_because_of_csv">
+          <h3>2. Select Source</h3>
+           <tabset class="tab-container">
+         <tab heading="Step 1" active="steps.step1" >
+           <tab-heading class="green"><b>MySQL</b></tab-heading>
+           
+
+            <accordion close-others="oneAtATime">
+
+      <accordion-group is-open="group.isOpen" ng-repeat="n in products" ng-click="getthevalueofdatabase(n.name)">
+        <accordion-heading   ><i class="glyphicon-plus"></i> {{ n.name }}
+          <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': group.isOpen, 'glyphicon-chevron-right': !group.isOpen}"></i>
+        </accordion-heading>
+        
+       
+                  <pre  ng-repeat="table in tabletoshow"  class="item" id="{{table.dbname}}"  draggable item="item" ng-model="keys" class="alert alert-info">{{table.dbname}}</pre>
+        
+        
+      </accordion-group>
+
+    </accordion>
+
+
+
+         </tab>
+        <tab heading="Step 1" active="steps.step2" >
+         <tab-heading class="green"><b>CSV</b></tab-heading>
+       </tab>
+
+       </tabset>
+
+
+         </tabset>
+        </div>
+        <div class="col-md-4" ng-if="hide_because_of_csv">
+          <h3>3. Visualizer</h3>
+         
+         <div class="col-sm-6">
+          <h6>Drag & Drop Respective table to join</h6>
+           <div class="bin" droppable drop="handleDrop" bin="bin" id="bin1"  >
+
+           </div>
+
+           <div class="bin" droppable drop="handleDrop" bin="bin" id="bin2"  >
+
+           </div>
+
+            <button type="button" class="btn btn-default btn-sm" ng-click="setjoinvalue()">&nbsp;&nbsp;&nbsp;join&nbsp;&nbsp;&nbsp;</button>
+            <br>
+            <br>
+        </div>
+
+        <div class="col-sm-6" ng-if="show">
+          <h6>Verify the primary key for joining.</h6>
+          <br>
+           <select ng-model="selectedcolum1" ng-change="select_first_column(selectedcolum1)" style="height:30px " class="form-control" ng-options="count.id as count.table_name for count in forbin1keys"></select>
+           <br>
+            <select ng-model="selectedcolum2" ng-change="select_second_column(selectedcolum2)" style="height:30px " class="form-control" ng-options="count.id as count.table_name for count in forbin2keys"></select>
+           <br>
+           <br>
+             <button type="button" class="btn btn-default btn-sm" ng-click="go_do_join()">Submit</button>
+
+         <br>
+         <br>
+
+        </div>
+
+        <div class="col-sm-6" ng-if="Transformhide">
+          
+          
+            <h6>Which transformation you want to apply?</h6>
+               
+                
+                <select class="form-control" style="height:30px " ng-model="platformtype" ng-change="platformchange(platformtype)" >
+                   <option value="" disabled selected>Select Type</option>
+                    <option value="ASC" ng-disabled="fbdisabled">Ascending</option>
+                     <option value="DESC" ng-disabled="tweetdisabled">descending</option>
+                     
+                     
+                      
+                   
+                   
+                   
+                </select>
+           
+             
+              <br>
+              
+               
+                <select ng-model="selectedcolum_to_transform" style="height:30px " ng-change="selected_column_to_sort(selectedcolum_to_transform)" class="form-control" ng-options=" count.table_name for count in forbin1keys"></select>
+             
+             
+              <br>
+              <button type="button" class="btn btn-default btn-sm" ng-click="Transform()">Transform</button>
+
+
+        </div>
+
+        <div class="col-sm-6" ng-if="finalresult">
+          <h6>Select Output file type?</h6>
+               
+                
+                <select class="form-control" style="height:30px " ng-model="content_typ" ng-change="content_type(content_typ)" >
+                   <option value="" disabled selected>Select Type</option>
+                    <option value="Csv" >CSV</option>
+                     <option value="html" >Plain html</option>
+                 </select>
+                 <br>
+                 <br>
+                 <br>
+                 <br>
+       <button type="button" class="btn btn-default btn-sm" ng-click="getfinalresult()">Final Result</button>
+
+        </div>
+
+      </div>
+      </div>
+
+      
+
+
+    </div> 
+
+
+   
